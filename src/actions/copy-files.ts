@@ -4,14 +4,28 @@ import { Action, Environment } from "../types";
 const schema = z.object({
   action: z.literal("copy-files"),
   name: z.string(),
-  files: z.array(z.string()),
+  files: z.array(
+    z.union([
+      z.string(),
+      z.object({
+        source: z.string(),
+        target: z.string(),
+      }),
+    ])
+  ),
 });
 
 function execute({ files }: z.infer<typeof schema>, env: Environment) {
   for (const file of files) {
-    const resolvedPath = env.resolveAsset(file);
-    const content = env.readAsset(resolvedPath);
-    env.write(file.replace("assets:", ""), content);
+    if (typeof file === "object") {
+      const resolvedPath = env.resolveAsset(file.source);
+      const content = env.readAsset(resolvedPath);
+      env.write(file.target, content);
+    } else {
+      const resolvedPath = env.resolveAsset(file);
+      const content = env.readAsset(resolvedPath);
+      env.write(file, content);
+    }
   }
 }
 

@@ -32,7 +32,7 @@ function validateTemplate(
   templateBasePath: string
 ): z.infer<typeof templateSchema> {
   const templateJson = jsonc.parse(
-    fs.readFileSync(path.join(templateBasePath, "template.jsonc"), "utf-8")
+    fs.readFileSync(path.join(templateBasePath, "template.json"), "utf-8")
   );
 
   if (templateJson.version !== 1) {
@@ -69,6 +69,11 @@ export function execute(
   options: {
     arguments: Record<string, string | number | boolean>;
     fresh?: boolean;
+    events?: {
+      onTemplateFinish?: (template: string) => void;
+      onStep?: (template: string, name: string) => void;
+      onTemplateStart?: (template: string) => void;
+    };
   }
 ) {
   if (options?.fresh) {
@@ -86,6 +91,8 @@ export function execute(
 
   // Execute the templates
   for (const template of templates) {
+    options?.events?.onTemplateStart?.(template);
+
     const templateBasePath = `templates/${template}`;
     const projectBasePath = name;
     const environment = createEnvironment(templateBasePath, projectBasePath, {
@@ -97,11 +104,14 @@ export function execute(
 
     for (const phase of validateTemplate(templateBasePath).phases) {
       for (const step of phase.steps) {
+        options?.events?.onStep?.(template, step.name);
         // @ts-ignore
         const action = actionsByName[step.action];
         // @ts-ignore
         action.execute(step, environment);
       }
     }
+
+    options?.events?.onTemplateFinish?.(template);
   }
 }

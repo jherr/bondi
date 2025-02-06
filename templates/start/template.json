@@ -84,8 +84,14 @@
         },
         {
           "action": "copy-files",
-          "name": "Create README",
-          "files": ["README.md"]
+          "name": "Create README and .gitignore",
+          "files": [
+            "README.md",
+            {
+              "source": "gitignore",
+              "target": ".gitignore"
+            }
+          ]
         },
         {
           "action": "copy-files",
