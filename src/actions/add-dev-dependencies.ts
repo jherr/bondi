@@ -3,6 +3,7 @@ import { Action, Environment } from "../types";
 
 const schema = z.object({
   action: z.literal("add-dev-dependencies"),
+  name: z.string(),
   packages: z.record(z.string(), z.string()),
 });
 

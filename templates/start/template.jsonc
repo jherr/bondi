@@ -1,0 +1,110 @@
+{
+  "name": "Start Template",
+
+  // Short description of the template
+  "description": "Sets up basic project structure for TanStack Start",
+
+  // Version of the template
+  "version": 1,
+
+  // Arguments that can be prompted or specified on the command line
+  "arguments": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "The name of the project"
+    },
+    "port": {
+      "type": "number",
+      "default": 3000,
+      "description": "The port to run the development server on"
+    }
+  },
+
+  // Variables that the template sets for itself and other templates
+  "variables": {
+    "framework": "start"
+  },
+
+  // Phases that the template runs
+  "phases": [
+    {
+      // Set up the basic application structure
+      "name": "Setup Application",
+      "steps": [
+        {
+          "action": "add-dependencies",
+          "name": "Setup core dependencies",
+          "packages": {
+            "@tanstack/start": "^1.99.8",
+            "@tanstack/react-router": "^1.99.8",
+            "vinxi": "^0.5.1",
+            "react": "^19.0.0",
+            "react-dom": "^19.0.0"
+          }
+        },
+        {
+          "action": "add-dev-dependencies",
+          "name": "Setup core development dependencies",
+          "packages": {
+            "@vitejs/plugin-react": "^4.3.4"
+          }
+        },
+        {
+          "action": "copy-files",
+          "name": "Create Vinxi config",
+          "files": ["app.config.ts"]
+        },
+        {
+          "action": "copy-files",
+          "name": "Create TypeScript config",
+          "files": ["tsconfig.json"]
+        },
+        {
+          "action": "add-dev-dependencies",
+          "name": "Add TypeScript dependencies",
+          "packages": {
+            "vite-tsconfig-paths": "^5.1.4",
+            "typescript": "^5.7.3",
+            "@types/react": "^19.0.0",
+            "@types/react-dom": "^19.0.0"
+          }
+        },
+        {
+          "action": "update-package-json",
+          "name": "Add package scripts",
+          "content": {
+            "type": "module",
+            "scripts": {
+              "dev": "<% if(port != 3000) { %>PORT=<%= port %> <% } %>vinxi dev",
+              "build": "vinxi build",
+              "start": "vinxi start"
+            }
+          }
+        },
+        {
+          "action": "copy-files",
+          "name": "Create README",
+          "files": ["README.md"]
+        },
+        {
+          "action": "copy-files",
+          "name": "Setup the router",
+          "files": ["app/client.tsx", "app/router.tsx", "app/ssr.tsx"]
+        }
+      ]
+    },
+
+    // Create the initial routes
+    {
+      "name": "Build Application",
+      "steps": [
+        {
+          "action": "copy-files",
+          "name": "Create the initial routes",
+          "files": ["app/routes/index.tsx", "app/routes/__root.tsx"]
+        }
+      ]
+    }
+  ]
+}

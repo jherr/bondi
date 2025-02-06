@@ -3,14 +3,15 @@ import { Action, Environment } from "../types";
 
 const schema = z.object({
   action: z.literal("copy-files"),
+  name: z.string(),
   files: z.array(z.string()),
 });
 
 function execute({ files }: z.infer<typeof schema>, env: Environment) {
   for (const file of files) {
-    const resolvedPath = env.resolve(file);
+    const resolvedPath = env.resolveAsset(file);
     const content = env.readAsset(resolvedPath);
-    env.write(resolvedPath, content);
+    env.write(file.replace("assets:", ""), content);
   }
 }
 

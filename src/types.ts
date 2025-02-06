@@ -28,5 +28,6 @@ export type Environment = {
   deepMergeIntoPackageJson(changes: Record<string, unknown>): void;
 
   // Template asset handling
+  resolveAsset: (path: string) => string;
   readAsset: (path: string) => string;
 };

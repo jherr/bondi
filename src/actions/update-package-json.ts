@@ -3,6 +3,7 @@ import { Action, Environment } from "../types";
 
 const schema = z.object({
   action: z.literal("update-package-json"),
+  name: z.string(),
   content: z.record(z.string(), z.any()),
 });
 

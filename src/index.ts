@@ -1,9 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { deepmerge } from "deepmerge-ts";
 import z from "zod";
 import { generateErrorMessage } from "zod-error";
-import rimraf from "rimraf";
+import { rimrafSync } from "rimraf";
+import ejs from "ejs";
+import { jsonc } from "jsonc";
 
 import * as actions from "./actions";
 
@@ -11,27 +12,60 @@ import type { Environment, Action } from "./types";
 
 const ASSETS = "assets";
 
+function deepMergeWithVariables(
+  input: Record<string, unknown>,
+  current: Record<string, unknown>,
+  variables: Record<string, string | number | boolean>
+): Record<string, unknown> {
+  for (const [key, value] of Object.entries(input)) {
+    if (typeof value === "string") {
+      current[key] = ejs.render(value, variables);
+    } else {
+      const defaultValue = Array.isArray(value) ? [] : {};
+      current[key] = deepMergeWithVariables(
+        value as Record<string, unknown>,
+        // @ts-ignore
+        current[key] ?? (defaultValue as Record<string, unknown>),
+        variables
+      );
+    }
+  }
+  return current;
+}
+
 function createEnvironment(
   templateBasePath: string,
-  projectBasePath: string
+  projectBasePath: string,
+  variables: Record<string, string | number | boolean>
 ): Environment {
   const environment: Environment = {
     root: projectBasePath,
     cwd: process.cwd(),
-    resolve: (p: string) => {
-      if (p.startsWith("assets:")) {
-        return path.join(templateBasePath, ASSETS, p.slice("assets:".length));
-      }
-      return path.join(projectBasePath, p);
-    },
+    resolve: (p: string) => path.resolve(templateBasePath, p),
+
     read: (p: string) =>
-      fs.readFileSync(path.join(projectBasePath, p), "utf-8"),
-    write: (p: string, content: string) =>
-      fs.writeFileSync(path.join(projectBasePath, p), content),
-    exists: (p: string) => fs.existsSync(path.join(projectBasePath, p)),
-    readAsset: (p: string) => {
-      return fs.readFileSync(path.join(templateBasePath, ASSETS, p), "utf-8");
+      fs.readFileSync(path.resolve(projectBasePath, p), "utf-8"),
+    write: (p: string, content: string) => {
+      fs.mkdirSync(path.dirname(path.resolve(projectBasePath, p)), {
+        recursive: true,
+      });
+      fs.writeFileSync(path.resolve(projectBasePath, p), content);
     },
+    exists: (p: string) => fs.existsSync(path.resolve(projectBasePath, p)),
+
+    readAsset: (p: string) => {
+      const assetPath = path.resolve(templateBasePath, ASSETS, p);
+      if (!fs.existsSync(assetPath)) {
+        const ejsPath = `${assetPath}.ejs`;
+        if (fs.existsSync(ejsPath)) {
+          return ejs.render(fs.readFileSync(ejsPath, "utf-8"), variables);
+        }
+        throw new Error(`Asset not found: ${p}`);
+      }
+      return fs.readFileSync(assetPath, "utf-8");
+    },
+    resolveAsset: (p: string) => path.resolve(templateBasePath, ASSETS, p),
+
     addDependencies: (dependencies: {
       direct: Record<string, string>;
       development: Record<string, string>;
@@ -39,7 +73,11 @@ function createEnvironment(
       if (!fs.existsSync(path.join(projectBasePath, "package.json"))) {
         fs.writeFileSync(
           path.join(projectBasePath, "package.json"),
-          JSON.stringify({ dependencies: {}, devDependencies: {} }, null, 2)
+          JSON.stringify(
+            { name: variables?.name, dependencies: {}, devDependencies: {} },
+            null,
+            2
+          )
         );
       }
       const packageJson = JSON.parse(
@@ -59,12 +97,16 @@ function createEnvironment(
       );
     },
     deepMergeIntoPackageJson: (changes: Record<string, unknown>) => {
-      const packageJson = JSON.parse(
+      const packageJson = jsonc.parse(
         fs.readFileSync(path.join(projectBasePath, "package.json"), "utf-8")
       );
       fs.writeFileSync(
         path.join(projectBasePath, "package.json"),
-        JSON.stringify(deepmerge(packageJson, changes), null, 2)
+        JSON.stringify(
+          deepMergeWithVariables(changes, packageJson, variables),
+          null,
+          2
+        )
       );
     },
   };
@@ -78,10 +120,31 @@ const actionSchemas: Record<string, z.ZodSchema> = {
   "update-package-json": actions.updatePackageJson.schema,
 };
 
+const actionsByName: Record<string, Action<z.ZodSchema>> = {
+  // @ts-ignore
+  "add-dependencies": actions.addDependencies,
+  // @ts-ignore
+  "add-dev-dependencies": actions.addDevDependencies,
+  // @ts-ignore
+  "copy-files": actions.copyFiles,
+  // @ts-ignore
+  "update-package-json": actions.updatePackageJson,
+};
+
 const templateSchema = z.object({
   name: z.string(),
   description: z.string(),
   version: z.number(),
+  arguments: z.record(
+    z.string(),
+    z.object({
+      type: z.enum(["string", "number", "boolean"]),
+      required: z.boolean().optional(),
+      default: z.any().optional(),
+      description: z.string(),
+    })
+  ),
+  variables: z.record(z.string(), z.string()),
   phases: z.array(
     z.object({
       name: z.string(),
@@ -93,8 +156,8 @@ const templateSchema = z.object({
 function validateTemplate(
   templateBasePath: string
 ): z.infer<typeof templateSchema> {
-  const templateJson = JSON.parse(
-    fs.readFileSync(path.join(templateBasePath, "template.json"), "utf-8")
+  const templateJson = jsonc.parse(
+    fs.readFileSync(path.join(templateBasePath, "template.jsonc"), "utf-8")
   );
 
   if (templateJson.version !== 1) {
@@ -128,7 +191,7 @@ function validateTemplate(
 validateTemplate("templates/start");
 
 if (fs.existsSync("./test")) {
-  rimraf.sync("./test");
+  rimrafSync("./test");
 }
 
 fs.mkdirSync("./test");
@@ -136,13 +199,18 @@ fs.mkdirSync("./test");
 const templateBasePath = "templates/start";
 const projectBasePath = "./test";
 
-const environment = createEnvironment(templateBasePath, projectBasePath);
+const environment = createEnvironment(templateBasePath, projectBasePath, {
+  name: "test",
+  port: 8080,
+  __npmInstall: "pnpm i",
+  __npmRun: "pnpm",
+});
 
 for (const phase of validateTemplate(templateBasePath).phases) {
   for (const step of phase.steps) {
     // @ts-ignore
-    const actions = actionSchemas[step.action];
+    const action = actionsByName[step.action];
     // @ts-ignore
-    actions?.[step.action]?.(step, environment);
+    action.execute(step, environment);
   }
 }
