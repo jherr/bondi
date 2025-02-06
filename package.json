@@ -1,0 +1,22 @@
+{
+  "name": "bondi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "deepmerge-ts": "^7.1.4",
+    "rimraf": "^6.0.1",
+    "zod": "^3.24.1",
+    "zod-error": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "typescript": "^5.7.3"
+  }
+}
