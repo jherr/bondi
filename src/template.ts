@@ -11,21 +11,15 @@ import { createEnvironment } from "./environment";
 import { templateSchema } from "./types";
 
 const actionSchemas: Record<string, z.ZodSchema> = {
-  "add-dependencies": actions.addDependencies.schema,
-  "add-dev-dependencies": actions.addDevDependencies.schema,
   "copy-files": actions.copyFiles.schema,
-  "update-package-json": actions.updatePackageJson.schema,
+  "update-json": actions.updateJSON.schema,
 };
 
 const actionsByName: Record<string, Action<z.ZodSchema>> = {
   // @ts-ignore
-  "add-dependencies": actions.addDependencies,
-  // @ts-ignore
-  "add-dev-dependencies": actions.addDevDependencies,
-  // @ts-ignore
   "copy-files": actions.copyFiles,
   // @ts-ignore
-  "update-package-json": actions.updatePackageJson,
+  "update-json": actions.updateJSON,
 };
 
 function validateTemplate(
@@ -63,7 +57,7 @@ function validateTemplate(
   return templateJson;
 }
 
-export function execute(
+export async function execute(
   name: string,
   templates: string[],
   options: {
@@ -108,7 +102,7 @@ export function execute(
         // @ts-ignore
         const action = actionsByName[step.action];
         // @ts-ignore
-        action.execute(step, environment);
+        await action.execute(step, environment);
       }
     }
 

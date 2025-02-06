@@ -15,7 +15,7 @@ const schema = z.object({
   ),
 });
 
-function execute({ files }: z.infer<typeof schema>, env: Environment) {
+async function execute({ files }: z.infer<typeof schema>, env: Environment) {
   for (const file of files) {
     if (typeof file === "object") {
       const resolvedPath = env.resolveAsset(file.source);

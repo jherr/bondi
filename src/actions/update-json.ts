@@ -2,18 +2,22 @@ import z from "zod";
 import { Action, Environment } from "../types";
 
 const schema = z.object({
-  action: z.literal("update-package-json"),
+  action: z.literal("update-json"),
   name: z.string(),
+  file: z.string(),
   content: z.record(z.string(), z.any()),
 });
 
-function execute({ content }: z.infer<typeof schema>, env: Environment) {
-  env.deepMergeIntoPackageJson(content);
+async function execute(
+  { file, content }: z.infer<typeof schema>,
+  env: Environment
+) {
+  env.updateJSON(file, content);
 }
 
 const action: Action<typeof schema> = {
-  name: "update-package-json",
-  description: "Update the package.json file",
+  name: "update-json",
+  description: "Update a JSON file",
   schema,
   execute,
 };

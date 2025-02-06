@@ -1,16 +1,18 @@
-[x] Handle gitignore
+- [x] Handle gitignore
 
-[ ] Collect arguments from the templates
-[ ] Add clack/prompts
-[ ] Add commander
-[ ] Create a `bondi.config.json`
+- [ ] Collect arguments from the templates
+- [x] Add clack/prompts
+- [ ] Add commander
 
-[ ] Add a shadcn template
-[ ] Change package-json update to just a generic JSON update so that we can use it on the tsconfig
+- [ ] Add a shadcn template
+- [x] Change package-json update to just a generic JSON update so that we can use it on the tsconfig, that can remove the dependencies and devDeps actions as well
 
-[ ] Handle post setup case (adding Tailwind to an existing app)
-[ ] Handle overwrites only when applying to an existing build
-[ ] Show visual diffs
+- [ ] Use a command action to install shadcn, after the tailwind setup?
+
+- [ ] Create a `bondi.config.json`
+- [ ] Handle post setup case (adding Tailwind to an existing app)
+- [ ] Handle overwrites only when applying to an existing build
+- [ ] Show visual diffs
 
 # Questions?
 

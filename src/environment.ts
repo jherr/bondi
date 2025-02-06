@@ -16,17 +16,33 @@ export function createEnvironment(
   const environment: Environment = {
     root: projectBasePath,
     cwd: process.cwd(),
-    resolve: (p: string) => path.resolve(templateBasePath, p),
 
-    read: (p: string) =>
-      fs.readFileSync(path.resolve(projectBasePath, p), "utf-8"),
-    write: (p: string, content: string) => {
-      fs.mkdirSync(path.dirname(path.resolve(projectBasePath, p)), {
+    resolve: (fname: string) => path.resolve(templateBasePath, fname),
+    read: (fname: string) =>
+      fs.readFileSync(path.resolve(projectBasePath, fname), "utf-8"),
+    write: (fname: string, content: string) => {
+      fs.mkdirSync(path.dirname(path.resolve(projectBasePath, fname)), {
         recursive: true,
       });
-      fs.writeFileSync(path.resolve(projectBasePath, p), content);
+      fs.writeFileSync(path.resolve(projectBasePath, fname), content);
     },
-    exists: (p: string) => fs.existsSync(path.resolve(projectBasePath, p)),
+    exists: (fname: string) =>
+      fs.existsSync(path.resolve(projectBasePath, fname)),
+
+    updateJSON: (fname: string, changes: Record<string, unknown>) => {
+      const fPath = path.resolve(projectBasePath, fname);
+      const original = fs.existsSync(fPath)
+        ? jsonc.parse(fs.readFileSync(fPath, "utf-8"))
+        : {};
+      fs.writeFileSync(
+        fPath,
+        JSON.stringify(
+          deepMergeWithVariables(changes, original, variables),
+          null,
+          2
+        )
+      );
+    },
 
     readAsset: (p: string) => {
       const assetPath = path.resolve(templateBasePath, ASSETS, p);
@@ -40,50 +56,6 @@ export function createEnvironment(
       return fs.readFileSync(assetPath, "utf-8");
     },
     resolveAsset: (p: string) => path.resolve(templateBasePath, ASSETS, p),
-
-    addDependencies: (dependencies: {
-      direct: Record<string, string>;
-      development: Record<string, string>;
-    }) => {
-      if (!fs.existsSync(path.join(projectBasePath, "package.json"))) {
-        fs.writeFileSync(
-          path.join(projectBasePath, "package.json"),
-          JSON.stringify(
-            { name: variables?.name, dependencies: {}, devDependencies: {} },
-            null,
-            2
-          )
-        );
-      }
-      const packageJson = JSON.parse(
-        fs.readFileSync(path.join(projectBasePath, "package.json"), "utf-8")
-      );
-      packageJson.dependencies = {
-        ...packageJson.dependencies,
-        ...dependencies.direct,
-      };
-      packageJson.devDependencies = {
-        ...packageJson.devDependencies,
-        ...dependencies.development,
-      };
-      fs.writeFileSync(
-        path.join(projectBasePath, "package.json"),
-        JSON.stringify(packageJson, null, 2)
-      );
-    },
-    deepMergeIntoPackageJson: (changes: Record<string, unknown>) => {
-      const packageJson = jsonc.parse(
-        fs.readFileSync(path.join(projectBasePath, "package.json"), "utf-8")
-      );
-      fs.writeFileSync(
-        path.join(projectBasePath, "package.json"),
-        JSON.stringify(
-          deepMergeWithVariables(changes, packageJson, variables),
-          null,
-          2
-        )
-      );
-    },
   };
   return environment;
 }

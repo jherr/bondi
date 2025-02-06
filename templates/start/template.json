@@ -33,21 +33,30 @@
       "name": "Setup Application",
       "steps": [
         {
-          "action": "add-dependencies",
+          "action": "update-json",
           "name": "Setup core dependencies",
-          "packages": {
-            "@tanstack/start": "^1.99.8",
-            "@tanstack/react-router": "^1.99.8",
-            "vinxi": "^0.5.1",
-            "react": "^19.0.0",
-            "react-dom": "^19.0.0"
+          "file": "package.json",
+          "content": {
+            "name": "<%= name %>",
+            "version": "0.0.1",
+            "license": "MIT",
+            "dependencies": {
+              "@tanstack/start": "^1.99.8",
+              "@tanstack/react-router": "^1.99.8",
+              "vinxi": "^0.5.1",
+              "react": "^19.0.0",
+              "react-dom": "^19.0.0"
+            }
           }
         },
         {
-          "action": "add-dev-dependencies",
+          "action": "update-json",
           "name": "Setup core development dependencies",
-          "packages": {
-            "@vitejs/plugin-react": "^4.3.4"
+          "file": "package.json",
+          "content": {
+            "devDependencies": {
+              "@vitejs/plugin-react": "^4.3.4"
+            }
           }
         },
         {
@@ -61,18 +70,22 @@
           "files": ["tsconfig.json"]
         },
         {
-          "action": "add-dev-dependencies",
+          "action": "update-json",
           "name": "Add TypeScript dependencies",
-          "packages": {
-            "vite-tsconfig-paths": "^5.1.4",
-            "typescript": "^5.7.3",
-            "@types/react": "^19.0.0",
-            "@types/react-dom": "^19.0.0"
+          "file": "package.json",
+          "content": {
+            "devDependencies": {
+              "vite-tsconfig-paths": "^5.1.4",
+              "typescript": "^5.7.3",
+              "@types/react": "^19.0.0",
+              "@types/react-dom": "^19.0.0"
+            }
           }
         },
         {
-          "action": "update-package-json",
+          "action": "update-json",
           "name": "Add package scripts",
+          "file": "package.json",
           "content": {
             "type": "module",
             "scripts": {

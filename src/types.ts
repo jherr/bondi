@@ -4,7 +4,7 @@ export type Action<T extends z.ZodType> = {
   name: string;
   description: string;
   schema: T;
-  execute: (data: z.infer<T>, env: Environment) => void;
+  execute(data: z.infer<T>, env: Environment): Promise<void>;
 };
 
 export type Environment = {
@@ -12,24 +12,17 @@ export type Environment = {
   cwd: string;
 
   // File handling
-  resolve: (path: string) => string;
-  read: (path: string) => string;
-  write: (path: string, content: string) => void;
-  exists: (path: string) => boolean;
+  resolve: (fname: string) => string;
+  read: (fname: string) => string;
+  write: (fname: string, content: string) => void;
+  exists: (fname: string) => boolean;
 
-  // Package handling
-  addDependencies({
-    direct,
-    development,
-  }: {
-    direct?: Record<string, string>;
-    development?: Record<string, string>;
-  }): void;
-  deepMergeIntoPackageJson(changes: Record<string, unknown>): void;
+  // JSON merge handling
+  updateJSON(fname: string, changes: Record<string, unknown>): void;
 
   // Template asset handling
-  resolveAsset: (path: string) => string;
-  readAsset: (path: string) => string;
+  resolveAsset: (fname: string) => string;
+  readAsset: (fname: string) => string;
 };
 
 export const templateSchema = z.object({
