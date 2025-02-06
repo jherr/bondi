@@ -31,3 +31,27 @@ export type Environment = {
   resolveAsset: (path: string) => string;
   readAsset: (path: string) => string;
 };
+
+export const templateSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  version: z.number(),
+  arguments: z.record(
+    z.string(),
+    z.object({
+      type: z.enum(["string", "number", "boolean"]),
+      required: z.boolean().optional(),
+      default: z.any().optional(),
+      description: z.string(),
+    })
+  ),
+  variables: z
+    .record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+    .optional(),
+  phases: z.array(
+    z.object({
+      name: z.string(),
+      steps: z.array(z.any()),
+    })
+  ),
+});

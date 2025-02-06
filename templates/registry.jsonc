@@ -1,0 +1,13 @@
+[
+  {
+    "name": "tailwind",
+    "description": "Add Tailwind CSS to a React application",
+    "template": "tailwind",
+    "dependsOn": ["start"]
+  },
+  {
+    "name": "start",
+    "description": "Set up a basic TanStack Start project",
+    "template": "start"
+  }
+]

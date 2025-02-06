@@ -1,0 +1,54 @@
+{
+  "name": "tailwind",
+
+  // Short description of the template
+  "description": "Sets up Tailwind on a TanStack Start project",
+
+  // Version of the template
+  "version": 1,
+
+  // Arguments that can be prompted or specified on the command line
+  "arguments": {},
+
+  // Variables that the template sets for itself and other templates
+  "variables": {
+    "tailwind": true
+  },
+
+  // Templates this template depends on
+  "dependsOn": ["start"],
+
+  // Phases that the template runs
+  "phases": [
+    {
+      // Add Tailwind to the app
+      "name": "Add Tailwind",
+      "steps": [
+        {
+          "action": "add-dependencies",
+          "name": "Setup core dependencies",
+          "packages": {
+            "@tailwindcss/postcss": "^4.0.4",
+            "postcss": "^8.5.1",
+            "tailwindcss": "^4.0.4"
+          }
+        },
+        {
+          "action": "copy-files",
+          "name": "Create PostCSS config",
+          "files": ["postcss.config.mjs"]
+        },
+        {
+          "action": "copy-files",
+          "name": "Create Index CSS",
+          "files": ["app/routes/index.css"]
+        },
+        {
+          "action": "copy-files",
+          "name": "Add CSS to Root Route",
+          "files": ["app/routes/__root.tsx"]
+        }
+      ]
+    }
+  ]
+}
