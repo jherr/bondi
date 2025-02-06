@@ -25,19 +25,18 @@ export type Environment = {
   readAsset: (fname: string) => string;
 };
 
+export const argumentSchema = z.object({
+  type: z.enum(["string", "number", "boolean"]),
+  required: z.boolean().optional(),
+  default: z.any().optional(),
+  description: z.string(),
+});
+
 export const templateSchema = z.object({
   name: z.string(),
   description: z.string(),
   version: z.number(),
-  arguments: z.record(
-    z.string(),
-    z.object({
-      type: z.enum(["string", "number", "boolean"]),
-      required: z.boolean().optional(),
-      default: z.any().optional(),
-      description: z.string(),
-    })
-  ),
+  arguments: z.record(z.string(), argumentSchema),
   variables: z
     .record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
     .optional(),

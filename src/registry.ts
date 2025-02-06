@@ -2,6 +2,9 @@ import fs from "node:fs";
 import { jsonc } from "jsonc";
 import z from "zod";
 
+import { load } from "./template";
+import { argumentSchema } from "./types";
+
 const registrySchema = z.array(
   z.object({
     name: z.string(),
@@ -33,4 +36,21 @@ export function getRegistry(file: string) {
     resolveDependencies,
     registry,
   };
+}
+
+export async function getArguments(
+  templates: string[]
+): Promise<(z.infer<typeof argumentSchema> & { name: string })[]> {
+  const args: Map<string, z.infer<typeof argumentSchema> & { name: string }> =
+    new Map();
+  for (const templateName of templates) {
+    const template = await load(templateName);
+    for (const arg of Object.entries(template.arguments || [])) {
+      args.set(arg[0], {
+        name: arg[0],
+        ...arg[1],
+      });
+    }
+  }
+  return Array.from(args.values());
 }

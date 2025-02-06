@@ -57,6 +57,10 @@ function validateTemplate(
   return templateJson;
 }
 
+export async function load(template: string) {
+  return validateTemplate(`templates/${template}`);
+}
+
 export async function execute(
   name: string,
   templates: string[],
