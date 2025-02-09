@@ -5,14 +5,11 @@ const schema = z.object({
   action: z.literal("update-json"),
   name: z.string(),
   file: z.string(),
-  content: z.record(z.string(), z.any()),
 });
 
-async function execute(
-  { file, content }: z.infer<typeof schema>,
-  env: Environment
-) {
-  env.updateJSON(file, content);
+async function execute({ file }: z.infer<typeof schema>, env: Environment) {
+  const content = env.readAsset(file);
+  env.updateJSON(file, JSON.parse(content));
 }
 
 const action: Action<typeof schema> = {

@@ -7,7 +7,7 @@ import { getRegistry, getArguments } from "./registry";
 const registry = getRegistry("./templates/registry.json");
 
 (async () => {
-  const templates = registry.resolveDependencies("tailwind");
+  const templates = registry.resolveDependencies("react-query");
 
   const argumentDefinitions = await getArguments(templates);
 

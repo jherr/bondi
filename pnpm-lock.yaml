@@ -11,12 +11,12 @@ importers:
       '@clack/prompts':
         specifier: ^0.10.0
         version: 0.10.0
-      deepmerge-ts:
-        specifier: ^7.1.4
-        version: 7.1.4
       ejs:
         specifier: ^3.1.10
         version: 3.1.10
+      glob:
+        specifier: ^11.0.1
+        version: 11.0.1
       jsonc:
         specifier: ^2.0.0
         version: 2.0.0
@@ -106,10 +106,6 @@ packages:
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
-
-  deepmerge-ts@7.1.4:
-    resolution: {integrity: sha512-fxqo6nHGQ9zOVgI4KXqtWXJR/yCLtC7aXIVq+6jc8tHPFUxlFmuUcm2kC4vztQ+LJxQ3gER/XAWearGYQ8niGA==}
-    engines: {node: '>=16.0.0'}
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -364,8 +360,6 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-
-  deepmerge-ts@7.1.4: {}
 
   eastasianwidth@0.2.0: {}
 

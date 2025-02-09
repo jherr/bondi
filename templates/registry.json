@@ -9,5 +9,11 @@
     "name": "start",
     "description": "Set up a basic TanStack Start project",
     "template": "start"
+  },
+  {
+    "name": "react-query",
+    "description": "React Query example",
+    "template": "react-query",
+    "dependsOn": ["tailwind"]
   }
 ]

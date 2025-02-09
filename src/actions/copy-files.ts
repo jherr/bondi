@@ -4,19 +4,27 @@ import { Action, Environment } from "../types";
 const schema = z.object({
   action: z.literal("copy-files"),
   name: z.string(),
-  files: z.array(
-    z.union([
-      z.string(),
-      z.object({
-        source: z.string(),
-        target: z.string(),
-      }),
-    ])
-  ),
+  files: z
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          source: z.string(),
+          target: z.string(),
+        }),
+      ])
+    )
+    .optional(),
+  globs: z.array(z.string()).optional(),
 });
 
-async function execute({ files }: z.infer<typeof schema>, env: Environment) {
-  for (const file of files) {
+async function execute(
+  { files, globs }: z.infer<typeof schema>,
+  env: Environment
+) {
+  const filesToCopy = [...(files || []), ...env.globAssets(globs || [])];
+  console.log(filesToCopy);
+  for (const file of filesToCopy) {
     if (typeof file === "object") {
       const resolvedPath = env.resolveAsset(file.source);
       const content = env.readAsset(resolvedPath);

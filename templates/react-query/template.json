@@ -1,8 +1,8 @@
 {
-  "name": "tailwind",
+  "name": "react-query",
 
   // Short description of the template
-  "description": "Sets up Tailwind on a TanStack Start project",
+  "description": "React Query example",
 
   // Version of the template
   "version": 1,
@@ -16,23 +16,27 @@
   },
 
   // Templates this template depends on
-  "dependsOn": ["start"],
+  "dependsOn": ["tailwind"],
 
   // Phases that the template runs
   "phases": [
     {
-      // Add Tailwind to the app
-      "name": "Add Tailwind",
+      // Add React Query to the app
+      "name": "Add React Query",
       "steps": [
         {
           "action": "update-json",
-          "name": "Setup tailwind dependencies",
+          "name": "Setup extra dependencies",
           "file": "package.json"
         },
         {
+          "action": "update-json",
+          "name": "Setup tsconfig",
+          "file": "tsconfig.json"
+        },
+        {
           "action": "copy-files",
-          "name": "Create configuration",
-          "files": ["postcss.config.mjs"],
+          "name": "Copy app Files",
           "globs": ["app/**/*"]
         }
       ]

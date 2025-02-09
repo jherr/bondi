@@ -29,99 +29,27 @@
   // Phases that the template runs
   "phases": [
     {
-      // Set up the basic application structure
       "name": "Setup Application",
       "steps": [
         {
           "action": "update-json",
-          "name": "Setup core dependencies",
-          "file": "package.json",
-          "content": {
-            "name": "<%= name %>",
-            "version": "0.0.1",
-            "license": "MIT",
-            "dependencies": {
-              "@tanstack/start": "^1.99.8",
-              "@tanstack/react-router": "^1.99.8",
-              "vinxi": "^0.5.1",
-              "react": "^19.0.0",
-              "react-dom": "^19.0.0"
-            }
-          }
-        },
-        {
-          "action": "update-json",
-          "name": "Setup core development dependencies",
-          "file": "package.json",
-          "content": {
-            "devDependencies": {
-              "@vitejs/plugin-react": "^4.3.4"
-            }
-          }
+          "name": "Setup package.json",
+          "file": "package.json"
         },
         {
           "action": "copy-files",
           "name": "Create Vinxi config",
-          "files": ["app.config.ts"]
-        },
-        {
-          "action": "copy-files",
-          "name": "Create TypeScript config",
-          "files": ["tsconfig.json"]
-        },
-        {
-          "action": "update-json",
-          "name": "Add TypeScript dependencies",
-          "file": "package.json",
-          "content": {
-            "devDependencies": {
-              "vite-tsconfig-paths": "^5.1.4",
-              "typescript": "^5.7.3",
-              "@types/react": "^19.0.0",
-              "@types/react-dom": "^19.0.0"
-            }
-          }
-        },
-        {
-          "action": "update-json",
-          "name": "Add package scripts",
-          "file": "package.json",
-          "content": {
-            "type": "module",
-            "scripts": {
-              "dev": "<% if(port != 3000) { %>PORT=<%= port %> <% } %>vinxi dev",
-              "build": "vinxi build",
-              "start": "vinxi start"
-            }
-          }
-        },
-        {
-          "action": "copy-files",
-          "name": "Create README and .gitignore",
           "files": [
+            ".prettierignore",
+            "app.config.ts",
+            "tsconfig.json",
             "README.md",
             {
               "source": "gitignore",
               "target": ".gitignore"
             }
-          ]
-        },
-        {
-          "action": "copy-files",
-          "name": "Setup the router",
-          "files": ["app/client.tsx", "app/router.tsx", "app/ssr.tsx"]
-        }
-      ]
-    },
-
-    // Create the initial routes
-    {
-      "name": "Build Application",
-      "steps": [
-        {
-          "action": "copy-files",
-          "name": "Create the initial routes",
-          "files": ["app/routes/index.tsx", "app/routes/__root.tsx"]
+          ],
+          "globs": ["app/**/*", ".vscode/**/*"]
         }
       ]
     }

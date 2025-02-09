@@ -21,6 +21,7 @@ export type Environment = {
   updateJSON(fname: string, changes: Record<string, unknown>): void;
 
   // Template asset handling
+  globAssets: (patterns: string[]) => string[];
   resolveAsset: (fname: string) => string;
   readAsset: (fname: string) => string;
 };

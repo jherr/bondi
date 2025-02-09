@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import ejs from "ejs";
 import { jsonc } from "jsonc";
+import { globSync } from "glob";
 
 import type { Environment } from "./types";
 import { deepMergeWithVariables } from "./utils";
@@ -44,6 +45,10 @@ export function createEnvironment(
       );
     },
 
+    globAssets: (patterns: string[]) => {
+      const assetPath = path.resolve(templateBasePath, ASSETS);
+      return globSync(patterns, { cwd: assetPath, nodir: true });
+    },
     readAsset: (p: string) => {
       const assetPath = path.resolve(templateBasePath, ASSETS, p);
       if (!fs.existsSync(assetPath)) {
