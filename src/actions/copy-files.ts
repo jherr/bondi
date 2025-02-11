@@ -23,7 +23,6 @@ async function execute(
   env: Environment
 ) {
   const filesToCopy = [...(files || []), ...env.globAssets(globs || [])];
-  console.log(filesToCopy);
   for (const file of filesToCopy) {
     if (typeof file === "object") {
       const resolvedPath = env.resolveAsset(file.source);

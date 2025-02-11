@@ -11,6 +11,11 @@
     "template": "start"
   },
   {
+    "name": "start-spa-tw4",
+    "description": "Set up a basic TanStack Start SPA project with Tailwind",
+    "template": "start-spa-tw4"
+  },
+  {
     "name": "react-query",
     "description": "React Query example",
     "template": "react-query",

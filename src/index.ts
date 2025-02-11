@@ -7,7 +7,7 @@ import { getRegistry, getArguments } from "./registry";
 const registry = getRegistry("./templates/registry.json");
 
 (async () => {
-  const templates = registry.resolveDependencies("react-query");
+  const templates = registry.resolveDependencies("start-spa-tw4");
 
   const argumentDefinitions = await getArguments(templates);
 

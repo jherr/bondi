@@ -56,7 +56,9 @@ export function createEnvironment(
         if (fs.existsSync(ejsPath)) {
           return ejs.render(fs.readFileSync(ejsPath, "utf-8"), variables);
         }
-        throw new Error(`Asset not found: ${p}`);
+        const errorPath = `Asset not found: ${p}`;
+        console.error(errorPath);
+        throw new Error(errorPath);
       }
       return fs.readFileSync(assetPath, "utf-8");
     },
