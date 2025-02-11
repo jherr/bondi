@@ -7,7 +7,7 @@ import { getRegistry, getArguments } from "./registry";
 const registry = getRegistry("./templates/registry.json");
 
 (async () => {
-  const templates = registry.resolveDependencies("start-spa-tw4");
+  const templates = registry.resolveDependencies("spa-with-trpc");
 
   const argumentDefinitions = await getArguments(templates);
 

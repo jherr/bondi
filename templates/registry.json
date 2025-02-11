@@ -16,6 +16,12 @@
     "template": "start-spa-tw4"
   },
   {
+    "name": "spa-with-trpc",
+    "description": "TanStack Start SPA with Tailwind and tRPC",
+    "template": "spa-with-trpc",
+    "dependsOn": ["start-spa-tw4"]
+  },
+  {
     "name": "react-query",
     "description": "React Query example",
     "template": "react-query",

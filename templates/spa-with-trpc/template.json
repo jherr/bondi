@@ -1,0 +1,38 @@
+{
+  "name": "spa-with-trpc",
+
+  // Short description of the template
+  "description": "TanStack Start SPA with Tailwind and tRPC",
+
+  // Version of the template
+  "version": 1,
+
+  // Arguments that can be prompted or specified on the command line
+  "arguments": {},
+
+  // Variables that the template sets for itself and other templates
+  "variables": {},
+
+  // Templates this template depends on
+  "dependsOn": ["start-spa-tw4"],
+
+  // Phases that the template runs
+  "phases": [
+    {
+      "name": "Setup Application",
+      "steps": [
+        {
+          "action": "update-json",
+          "name": "Setup package.json",
+          "file": "package.json"
+        },
+        {
+          "action": "copy-files",
+          "name": "Copying initial files",
+          "files": ["app.config.js", "trpc-server.handler.ts"],
+          "globs": ["app/**/*"]
+        }
+      ]
+    }
+  ]
+}

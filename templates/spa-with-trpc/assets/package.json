@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@trpc/client": "11.0.0-rc.761",
+    "@trpc/react-query": "11.0.0-rc.761",
+    "@trpc/server": "11.0.0-rc.761",
+    "zod": "^3.24.1"
+  }
+}
